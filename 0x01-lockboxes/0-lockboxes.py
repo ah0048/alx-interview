@@ -4,7 +4,7 @@
 
 def canUnlockAll(boxes):
     '''Determines if all the boxes can be opened'''
-    if not boxes or len(boxes) == 0:
+    if not boxes or len(boxes) == 0 or not isinstance(boxes, list):
         return False
     length = len(boxes)
     closed_boxes = list(range(1, length))
