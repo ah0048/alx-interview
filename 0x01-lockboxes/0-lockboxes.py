@@ -4,6 +4,8 @@
 
 def canUnlockAll(boxes):
     '''Determines if all the boxes can be opened'''
+    if not boxes or len(boxes) == 0:
+        return False
     length = len(boxes)
     closed_boxes = list(range(1, length))
     for key in boxes[0]:
