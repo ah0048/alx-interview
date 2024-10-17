@@ -6,7 +6,14 @@ def minOperations(n):
     '''finds the fewest number of operations needed to result in exactly n H'''
     if n <= 1:
         return 0
-    for i in range(2, n):
-        if n % i == 0:
-            return minOperations(n // i) + i
-    return n
+
+    operations = 0
+    factor = 2
+    while n > 1:
+        if n % factor == 0:
+            n /= factor
+            operations += factor
+        else:
+            factor += 1
+
+    return operations
