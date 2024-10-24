@@ -1,51 +1,62 @@
 #!/usr/bin/python3
-"""
-Task 0. Log parsing
-
-A script that reads stdin line by line and computes metrics.
-"""
-
 import sys
+import signal
+import re
 
+def print_stats(total_size, status_codes):
+    """Print the statistics."""
+    print(f"File size: {total_size}")
+    for code in sorted(status_codes.keys()):
+        if status_codes[code] > 0:
+            print(f"{code}: {status_codes[code]}")
 
-def printStats(file_size, status):
-    """printStats
+def signal_handler(sig, frame):
+    """Handle CTRL+C signal."""
+    print_stats(total_file_size, status_codes)
+    sys.exit(0)
 
-    This function takes the total file size and the
-    statues that were called and prints them.
-
-    Arguments:
-        file_size (int): The total file size to be printed.
-        status (dict{int, int}): A dictionary of the statues that were called.
-    """
-    print("File size: {}".format(file_size))
-    for key, value in sorted(status.items()):
-        if value != 0:
-            print("{}: {}".format(key, value))
-
-
+# Initialize variables
 total_file_size = 0
-count = 0
-possible_status = {200: 0, 301: 0, 400: 0, 401: 0,
-                   403: 0, 404: 0, 405: 0, 500: 0}
+line_count = 0
+status_codes = {
+    200: 0, 301: 0, 400: 0, 401: 0,
+    403: 0, 404: 0, 405: 0, 500: 0
+}
+
+# Regular expression pattern for line validation
+pattern = r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} - \[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+\] "GET /projects/260 HTTP/1.1" (\d+) (\d+)$'
+
+# Set up signal handler for CTRL+C
+signal.signal(signal.SIGINT, signal_handler)
+
 try:
     for line in sys.stdin:
-        args = line.split()
-
-        status_code = int(args[-2])
-        file_size = int(args[-1])
-
-        if status_code in possible_status:
-            possible_status[status_code] += 1
-
-        total_file_size += file_size
-        count += 1
-
-        if count == 10:
-            printStats(total_file_size, possible_status)
-            count = 0
-    printStats(total_file_size, possible_status)
+        try:
+            # Remove trailing whitespace
+            line = line.strip()
+            
+            # Check if line matches the expected format
+            match = re.match(pattern, line)
+            if not match:
+                continue
+            
+            # Extract status code and file size
+            status_code = int(match.group(1))
+            file_size = int(match.group(2))
+            
+            # Update metrics
+            if status_code in status_codes:
+                status_codes[status_code] += 1
+            total_file_size += file_size
+            line_count += 1
+            
+            # Print stats every 10 lines
+            if line_count % 10 == 0:
+                print_stats(total_file_size, status_codes)
+                
+        except (ValueError, IndexError):
+            continue
+            
 except KeyboardInterrupt:
-    raise
-finally:
-    printStats(total_file_size, possible_status)
+    print_stats(total_file_size, status_codes)
+    sys.exit(0)
