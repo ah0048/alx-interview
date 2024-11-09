@@ -23,7 +23,11 @@ class NQueens:
             return
 
         for col in range(self.N):
-            if (col in self.col or (row + col) in self.posDiag or (row - col) in self.negDiag):
+            if (
+                col in self.col or
+                (row + col) in self.posDiag or
+                (row - col) in self.negDiag
+            ):
                 continue
 
             # Add queen position
