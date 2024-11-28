@@ -10,17 +10,14 @@ def makeChange(coins, total):
     '''
     if total <= 0:
         return 0
-    dict_values = {i: total + 1 for i in range(total + 1)}
-    dict_values[0] = 0
-    for key, value in dict_values.items():
-        for coin in coins:
-            if coin > key:
-                continue
-            prev_key = key - coin
-            value = min(dict_values[prev_key] + 1, value)
-            dict_values[key] = value
+    dp = [float('inf')] * (total + 1)
+    dp[0] = 0
 
-    if dict_values[total] != total + 1:
-        return dict_values[total]
+    for coin in coins:
+        for index in range(coin, total + 1):
+            dp[index] = min(dp[index], dp[index - coin] + 1)
+
+    if dp[total] != float('inf'):
+        return dp[total]
     else:
         return -1
