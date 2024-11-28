@@ -52,4 +52,4 @@ def makeChange(coins, total):
     if greedy_result != -1:
         return greedy_result
 
-    return dp_sol(coins, total)
+    # return dp_sol(coins, total)
