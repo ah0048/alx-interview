@@ -2,7 +2,23 @@
 '''module for make change'''
 
 
-def makeChange(coins, total):
+def greedy_sol(coins, total):
+    '''
+    Given a pile of coins of different values
+    returns the fewest number of coins needed to meet a given amount total.
+    solved by greedy approuch
+    '''
+    count = 0
+    coins.sort(reverse=True)
+
+    for coin in coins:
+        count += total // coin
+        total %= coin
+
+    return count if total == 0 else -1
+
+
+def dp_sol(coins, total):
     '''
     Given a pile of coins of different values
     returns the fewest number of coins needed to meet a given amount total.
@@ -21,3 +37,19 @@ def makeChange(coins, total):
         return dp[total]
     else:
         return -1
+
+
+def makeChange(coins, total):
+    '''
+    Given a pile of coins of different values
+    returns the fewest number of coins needed to meet a given amount total.
+    '''
+
+    if total <= 0:
+        return 0
+
+    greedy_result = greedy_sol(coins, total)
+    if greedy_result != -1:
+        return greedy_result
+
+    return dp_sol(coins, total)
