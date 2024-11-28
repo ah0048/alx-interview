@@ -49,7 +49,7 @@ def makeChange(coins, total):
         return 0
 
     greedy_result = greedy_sol(coins, total)
-    if greedy_result != -1:
-        return greedy_result
-
+    # if greedy_result != -1:
+    #     return greedy_result
+    return greedy_result
     # return dp_sol(coins, total)
